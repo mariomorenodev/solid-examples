@@ -1,0 +1,18 @@
+{
+  "name": "solid/examples",
+  "description": "Solid examples course codely",
+  "type": "project",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Solid\\Examples\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Mario Moreno"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {}
+}

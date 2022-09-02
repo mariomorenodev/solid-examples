@@ -1,0 +1,60 @@
+version: "3"
+services:
+    #PHP Service
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: solid-app
+        restart: unless-stopped
+        tty: true
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+            - ./.docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+            - ./.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug-dev.ini
+        networks:
+            - solid-network
+
+    #Nginx Service
+    webserver:
+        image: nginx:alpine
+        container_name: solid-webserver
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "80:80"
+        volumes:
+            - ./:/var/www
+            - ./.docker/nginx/conf.d:/etc/nginx/conf.d
+        networks:
+            - solid-network
+
+    #MySQL Service
+    db:
+        image: mysql:8.0.29
+        container_name: solid-db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: "solid_examples"
+            MYSQL_ROOT_PASSWORD: "password"
+        volumes:
+            - dbdata:/var/lib/mysql
+            - ./.docker/backup:/opt/backup
+            - ./.docker/mysql/my.cnf:/etc/mysql/my.cnf
+        networks:
+            - solid-network
+
+#Docker Networks
+networks:
+    solid-network:
+        name: 'solid-network'
+        driver: bridge
+
+#Volumes
+volumes:
+    dbdata:
+        driver: local
